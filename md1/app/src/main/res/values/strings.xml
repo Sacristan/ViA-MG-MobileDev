@@ -5,4 +5,7 @@
     <string name="catch_image">Uzņemt attēlu</string>
     <string name="image_thumb">Uzņemtā attēla priekšskats</string>
     <string name="catch_video">Uznemt video</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

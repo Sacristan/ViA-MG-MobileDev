@@ -1,3 +1,9 @@
+/*
+REFS:
+https://www.youtube.com/watch?v=bNpWGI_hGGg
+https://github.com/mitchtabian/TabFragments
+*/
+
 package com.teamtwo.md1;
 import android.content.Context;
 import android.content.Intent;
@@ -7,7 +13,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.design.widget.TabLayout;
 import android.support.v4.content.FileProvider;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -33,6 +41,17 @@ public class MainActivity extends AppCompatActivity {
     String mCurrentPhotoPath;
     private ImageAdapter adapter;
     private FirebaseAnalytics mFirebaseAnalytics;
+
+    private SectionsPageAdapter sectionsPageAdapter;
+    private ViewPager viewPager;
+
+
+    private void setupViewPager(ViewPager viewPager){
+        SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
+        adapter.addFragment(new CameraFragment(), "Camera");
+        adapter.addFragment(new CameraFragment(), "Audio");
+        viewPager.setAdapter(adapter);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +79,12 @@ public class MainActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
             }
         });
+
+        viewPager = (ViewPager) findViewById(R.id.container);
+        setupViewPager(viewPager);
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
@@ -140,7 +165,10 @@ public class MainActivity extends AppCompatActivity {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
+
+//        File storageDir = getFilesDir();
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
