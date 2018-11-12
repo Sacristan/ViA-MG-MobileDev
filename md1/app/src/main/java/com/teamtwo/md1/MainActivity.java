@@ -68,17 +68,16 @@ public class MainActivity extends AppCompatActivity {
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "launched application");
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
-
-        GridView gridview = findViewById(R.id.gridview);
-        gridview.setAdapter(adapter);
-
-        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                Toast.makeText(MainActivity.this, "" + position,
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
+//        GridView gridview = findViewById(R.id.gridview);
+//        gridview.setAdapter(adapter);
+//
+//        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            public void onItemClick(AdapterView<?> parent, View v,
+//                                    int position, long id) {
+//                Toast.makeText(MainActivity.this, "" + position,
+//                        Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
         viewPager = (ViewPager) findViewById(R.id.container);
         setupViewPager(viewPager);
