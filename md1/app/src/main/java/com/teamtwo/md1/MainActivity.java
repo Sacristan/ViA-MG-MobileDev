@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager){
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
         adapter.addFragment(new CameraFragment(), "Camera");
-        adapter.addFragment(new CameraFragment(), "Audio");
+        adapter.addFragment(new AudioFragment(), "Audio");
         viewPager.setAdapter(adapter);
     }
 
