@@ -37,19 +37,25 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
-    private ImageView thumbnailView;
     String mCurrentPhotoPath;
-    private ImageAdapter adapter;
+
     private FirebaseAnalytics mFirebaseAnalytics;
 
     private SectionsPageAdapter sectionsPageAdapter;
     private ViewPager viewPager;
 
+    CameraFragment cameraFragment;
+    AudioFragment audioFragment;
+
 
     private void setupViewPager(ViewPager viewPager){
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
-        adapter.addFragment(new CameraFragment(), "Camera");
-        adapter.addFragment(new AudioFragment(), "Audio");
+
+        cameraFragment = new CameraFragment();
+        audioFragment = new AudioFragment();
+
+        adapter.addFragment(cameraFragment, "Camera");
+        adapter.addFragment(audioFragment, "Audio");
         viewPager.setAdapter(adapter);
     }
 
@@ -59,8 +65,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        thumbnailView = findViewById(R.id.thumbView);
-        adapter = new ImageAdapter(this);
         // Obtain the FirebaseAnalytics instance.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
@@ -68,9 +72,13 @@ public class MainActivity extends AppCompatActivity {
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "launched application");
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
-//        GridView gridview = findViewById(R.id.gridview);
-//        gridview.setAdapter(adapter);
-//
+        viewPager = (ViewPager) findViewById(R.id.container);
+        setupViewPager(viewPager);
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
+
+
 //        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            public void onItemClick(AdapterView<?> parent, View v,
 //                                    int position, long id) {
@@ -79,11 +87,6 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
-        viewPager = (ViewPager) findViewById(R.id.container);
-        setupViewPager(viewPager);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
@@ -149,9 +152,9 @@ public class MainActivity extends AppCompatActivity {
         protected void onActivityResult(int requestCode, int resultCode, Intent data) {
             if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
                 Bitmap myBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
-                thumbnailView.setImageBitmap(myBitmap);
-                adapter.addThisBitmap(myBitmap);
-                adapter.notifyDataSetChanged();
+                cameraFragment.thumbnailView.setImageBitmap(myBitmap);
+                cameraFragment.adapter.addThisBitmap(myBitmap);
+                cameraFragment.adapter.notifyDataSetChanged();
             }
         }
 
@@ -180,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
         return image;
     }
 
-    public class ImageAdapter extends BaseAdapter {
+    public static class ImageAdapter extends BaseAdapter {
         private Context mContext;
         // References to our images
         ArrayList<Bitmap> mThumbs = new ArrayList<Bitmap>();
