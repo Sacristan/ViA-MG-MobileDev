@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
         this.traverse(storageDir);
     }
 
@@ -116,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void recordAudio(View view){
-
+        audioFragment.toggleRecord();
     }
 
     /**
