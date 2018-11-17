@@ -5,4 +5,6 @@
     android:layout_height="match_parent"
     tools:context=".AudioFragment">
 
+    <include layout="@layout/content_fragment_audio" />
+
 </FrameLayout>

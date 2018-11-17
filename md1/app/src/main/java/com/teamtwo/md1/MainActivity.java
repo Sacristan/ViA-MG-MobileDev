@@ -114,6 +114,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    public void recordAudio(View view){
+
+    }
+
     /**
      * Run a functiopn on button click, invoke devices camera
      * @param view
