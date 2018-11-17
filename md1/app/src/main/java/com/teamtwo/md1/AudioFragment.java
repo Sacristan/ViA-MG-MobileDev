@@ -46,18 +46,17 @@ public class AudioFragment extends Fragment {
 
     Button recordButton;
     TextView currentRecordAudioNameTextView;
+    LinearLayout audioButtonContainer;
 
     private boolean isRecording = false;
 
     String currentAudioFileName;
     List<String> audioFilesList = new ArrayList<>();
 
-
     public void toggleRecord(){
         isRecording =!isRecording;
 
         String recordButtonText;
-
 
         if(isRecording) {
             startRecording();
@@ -69,9 +68,18 @@ public class AudioFragment extends Fragment {
             stopRecording();
             recordButtonText = "Start Recording";
             currentRecordAudioNameTextView.setText("");
+
+            addNewRecordItem();
         }
 
         recordButton.setText(recordButtonText);
+    }
+
+    private void addNewRecordItem(){
+        Button itemButton = new Button(this.getContext());
+//        itemButton.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        itemButton.setText(currentAudioFileName);
+        audioButtonContainer.addView(itemButton, 0);
     }
 
     @Nullable
@@ -81,6 +89,7 @@ public class AudioFragment extends Fragment {
 
         ActivityCompat.requestPermissions(this.getActivity(), permissions, REQUEST_RECORD_AUDIO_PERMISSION);
         recordButton = view.findViewById(R.id.recordAudioButton);
+        audioButtonContainer = view.findViewById(R.id.audioButtonContainer);
         currentRecordAudioNameTextView = view.findViewById(R.id.currentRecordAudioName);
         currentRecordAudioNameTextView.setText("");
         return view;
@@ -173,49 +182,4 @@ public class AudioFragment extends Fragment {
         mRecorder.release();
         mRecorder = null;
     }
-
-//    class RecordButton extends Button {
-//        boolean mStartRecording = true;
-//
-//        OnClickListener clicker = new OnClickListener() {
-//            public void onClick(View v) {
-//                onRecord(mStartRecording);
-//                if (mStartRecording) {
-//                    setText("Stop recording");
-//                } else {
-//                    setText("Start recording");
-//                }
-//                mStartRecording = !mStartRecording;
-//            }
-//        };
-//
-//        public RecordButton(Context ctx) {
-//            super(ctx);
-//            setText("Start recording");
-//            setOnClickListener(clicker);
-//        }
-//    }
-//
-//    class PlayButton extends Button {
-//        boolean mStartPlaying = true;
-//
-//        OnClickListener clicker = new OnClickListener() {
-//            public void onClick(View v) {
-//                onPlay(mStartPlaying);
-//                if (mStartPlaying) {
-//                    setText("Stop playing");
-//                } else {
-//                    setText("Start playing");
-//                }
-//                mStartPlaying = !mStartPlaying;
-//            }
-//        };
-//
-//        public PlayButton(Context ctx) {
-//            super(ctx);
-//            setText("Start playing");
-//            setOnClickListener(clicker);
-//        }
-//    }
-
 }
