@@ -27,16 +27,16 @@
             tools:padding="8dp"
             tools:text="Start recording" />
 
-        <EditText
-            android:id="@+id/recordAudioText"
+        <TextView
+            android:id="@+id/currentRecordAudioName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:editable="false"
             android:ems="10"
-            android:focusableInTouchMode="false"
-            android:inputType="textPersonName"
-            android:text="Recorded Audio Name"
-            tools:text="Recorded Audio Name" />
+            android:text=""
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            tools:text="LOREM IPSUM" />
+
 
         <ScrollView
             android:layout_width="368dp"
@@ -45,6 +45,7 @@
             tools:layout_editor_absoluteY="71dp">
 
             <LinearLayout
+                android:id="@+id/audioButtonContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">

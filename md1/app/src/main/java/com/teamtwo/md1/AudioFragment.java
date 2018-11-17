@@ -18,11 +18,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class AudioFragment extends Fragment {
     private static final String LOG_TAG = "AudioFragment";
@@ -42,10 +45,12 @@ public class AudioFragment extends Fragment {
     };
 
     Button recordButton;
+    TextView currentRecordAudioNameTextView;
 
     private boolean isRecording = false;
 
-
+    String currentAudioFileName;
+    List<String> audioFilesList = new ArrayList<>();
 
 
     public void toggleRecord(){
@@ -57,11 +62,13 @@ public class AudioFragment extends Fragment {
         if(isRecording) {
             startRecording();
             recordButtonText = "Stop Recording";
+            currentRecordAudioNameTextView.setText("Recording " +currentAudioFileName + " ...");
         }
         else
         {
             stopRecording();
             recordButtonText = "Start Recording";
+            currentRecordAudioNameTextView.setText("");
         }
 
         recordButton.setText(recordButtonText);
@@ -74,36 +81,10 @@ public class AudioFragment extends Fragment {
 
         ActivityCompat.requestPermissions(this.getActivity(), permissions, REQUEST_RECORD_AUDIO_PERMISSION);
         recordButton = view.findViewById(R.id.recordAudioButton);
+        currentRecordAudioNameTextView = view.findViewById(R.id.currentRecordAudioName);
+        currentRecordAudioNameTextView.setText("");
         return view;
     }
-
-//    @Override
-//    public void onCreate(Bundle icicle) {
-//        super.onCreate(icicle);
-//
-//        // Record to the external cache directory for visibility
-//        mFileName = getExternalCacheDir().getAbsolutePath();
-//        mFileName += "/audiorecordtest.3gp";
-//
-//        ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
-//
-//        LinearLayout ll = new LinearLayout(this);
-//        mRecordButton = new AudioRecordTest.RecordButton(this);
-//        ll.addView(mRecordButton,
-//                new LinearLayout.LayoutParams(
-//                        ViewGroup.LayoutParams.WRAP_CONTENT,
-//                        ViewGroup.LayoutParams.WRAP_CONTENT,
-//                        0));
-//        mPlayButton = new AudioRecordTest.PlayButton(this);
-//        ll.addView(mPlayButton,
-//                new LinearLayout.LayoutParams(
-//                        ViewGroup.LayoutParams.WRAP_CONTENT,
-//                        ViewGroup.LayoutParams.WRAP_CONTENT,
-//                        0));
-//        setContentView(ll);
-//    }
-
-
 
     @Override
     public void onStop() {
@@ -167,28 +148,9 @@ public class AudioFragment extends Fragment {
     private String getAudioPath(){
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String fileName = "Rec_"+timeStamp;
-
+        currentAudioFileName = fileName;
         return getContext().getExternalFilesDir(Environment.DIRECTORY_MUSIC) + "/" + fileName;
     }
-
-//    private File createAudioFile() throws IOException {
-//        // Create an image file name
-//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-//        String fileName = getAudioPath();
-//
-////        File storageDir = getFilesDir();
-//        File storageDir = getContext().getExternalFilesDir(Environment.DIRECTORY_MUSIC);
-//
-//        File audioFile = File.createTempFile(
-//                fileName,  /* prefix */
-//                ".jpg",         /* suffix */
-//                storageDir      /* directory */
-//        );
-//
-//        // Save a file: path for use with ACTION_VIEW intents
-//
-//        return audioFile;
-//    }
 
     private void startRecording() {
         mRecorder = new MediaRecorder();
@@ -211,8 +173,6 @@ public class AudioFragment extends Fragment {
         mRecorder.release();
         mRecorder = null;
     }
-
-
 
 //    class RecordButton extends Button {
 //        boolean mStartRecording = true;
