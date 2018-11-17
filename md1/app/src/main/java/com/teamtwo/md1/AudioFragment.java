@@ -7,6 +7,7 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -18,7 +19,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class AudioFragment extends Fragment {
     private static final String LOG_TAG = "AudioFragment";
@@ -41,9 +45,8 @@ public class AudioFragment extends Fragment {
 
     private boolean isRecording = false;
 
-    private String getAudioPath(){
-        return "";
-    }
+
+
 
     public void toggleRecord(){
         isRecording =!isRecording;
@@ -137,11 +140,12 @@ public class AudioFragment extends Fragment {
     }
 
     private void onPlay(boolean start) {
-        if (start) {
-            startPlaying();
-        } else {
-            stopPlaying();
-        }
+        //TODO: FIX
+//        if (start) {
+//            startPlaying();
+//        } else {
+//            stopPlaying();
+//        }
     }
 
     private void startPlaying(String filePath) {
@@ -159,6 +163,32 @@ public class AudioFragment extends Fragment {
         mPlayer.release();
         mPlayer = null;
     }
+
+    private String getAudioPath(){
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String fileName = "Rec_"+timeStamp;
+
+        return getContext().getExternalFilesDir(Environment.DIRECTORY_MUSIC) + "/" + fileName;
+    }
+
+//    private File createAudioFile() throws IOException {
+//        // Create an image file name
+//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+//        String fileName = getAudioPath();
+//
+////        File storageDir = getFilesDir();
+//        File storageDir = getContext().getExternalFilesDir(Environment.DIRECTORY_MUSIC);
+//
+//        File audioFile = File.createTempFile(
+//                fileName,  /* prefix */
+//                ".jpg",         /* suffix */
+//                storageDir      /* directory */
+//        );
+//
+//        // Save a file: path for use with ACTION_VIEW intents
+//
+//        return audioFile;
+//    }
 
     private void startRecording() {
         mRecorder = new MediaRecorder();
