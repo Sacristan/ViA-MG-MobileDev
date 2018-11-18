@@ -16,9 +16,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.Random;
+
 public class MainActivity extends AppCompatActivity {
+
+    private static final int PICTURE_COUNT = 25;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -103,8 +108,17 @@ public class MainActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+//            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+//            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+
+            ImageView imageView = (ImageView) rootView.findViewById(R.id.inspirationalBackground);
+
+            Random rand = new Random();
+            int rndInt = rand.nextInt(PICTURE_COUNT) + 1;
+            String imgName = "img_" + rndInt;
+            int id = getResources().getIdentifier(imgName, "drawable", this.getContext().getPackageName());
+            imageView.setImageResource(id);
+
             return rootView;
         }
     }
@@ -128,8 +142,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
-            return 3;
+            return Integer.MAX_VALUE; //Gl, with that
         }
     }
 }
