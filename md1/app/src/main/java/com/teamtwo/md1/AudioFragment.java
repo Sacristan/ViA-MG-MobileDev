@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,7 +31,6 @@ import java.util.List;
 public class AudioFragment extends Fragment {
     private static final String LOG_TAG = "AudioFragment";
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
-    private static String mFileName = null;
 
     private AudioRecordTest.RecordButton mRecordButton = null;
     private MediaRecorder mRecorder = null;
@@ -51,7 +51,6 @@ public class AudioFragment extends Fragment {
     private boolean isRecording = false;
 
     String currentAudioFileName;
-    List<String> audioFilesList = new ArrayList<>();
 
     public void toggleRecord(){
         isRecording =!isRecording;
@@ -79,6 +78,14 @@ public class AudioFragment extends Fragment {
         Button itemButton = new Button(this.getContext());
 //        itemButton.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         itemButton.setText(currentAudioFileName);
+
+        itemButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String p = getAudioFilePath(currentAudioFileName);
+                startPlaying(p);
+            }
+        });
+
         audioButtonContainer.addView(itemButton, 0);
     }
 
@@ -120,23 +127,23 @@ public class AudioFragment extends Fragment {
         }
     }
 
-
-    private void onRecord(boolean start) {
-        if (start) {
-            startRecording();
-        } else {
-            stopRecording();
-        }
-    }
-
-    private void onPlay(boolean start) {
-        //TODO: FIX
+//
+//    private void onRecord(boolean start) {
 //        if (start) {
-//            startPlaying();
+//            startRecording();
 //        } else {
-//            stopPlaying();
+//            stopRecording();
 //        }
-    }
+//    }
+//
+//    private void onPlay(boolean start) {
+//        //TODO: FIX
+////        if (start) {
+////            startPlaying();
+////        } else {
+////            stopPlaying();
+////        }
+//    }
 
     private void startPlaying(String filePath) {
         mPlayer = new MediaPlayer();
@@ -154,19 +161,60 @@ public class AudioFragment extends Fragment {
         mPlayer = null;
     }
 
-    private String getAudioPath(){
+    private File getAudioStorageDir() {
+        return getContext().getExternalFilesDir("Audio");
+    }
+
+    private String getAudioFilePath(String name){
+        File dir = getAudioStorageDir();
+        return dir.getAbsolutePath() + "/" + name;
+    }
+
+    private File createAudioFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String fileName = "Rec_"+timeStamp;
-        currentAudioFileName = fileName;
-        return getContext().getExternalFilesDir(Environment.DIRECTORY_MUSIC) + "/" + fileName;
+        String fileName = "Rec_" + timeStamp;
+        String suffix = ".3gp";
+
+        File storageDir =  getAudioStorageDir();
+
+        Log.i(LOG_TAG, "STORAGE DIR: "+storageDir.getAbsolutePath());
+
+        File file = File.createTempFile(
+                fileName,  /* prefix */
+                suffix,
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+//        mCurrentPhotoPath = image.getAbsolutePath();
+
+        Log.i(LOG_TAG, "Created file: "+file.getAbsolutePath());
+
+        currentAudioFileName = fileName + suffix;
+
+        return file;
     }
 
     private void startRecording() {
+//        String mFileName = getContext().getExternalCacheDir().getAbsolutePath();
+//        mFileName += "/"+getFileName();
+
+
+        File audioFile = null;
+        try {
+            audioFile = createAudioFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mRecorder.setOutputFile(getAudioPath());
+        mRecorder.setOutputFile(audioFile);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
+        mRecorder.setMaxDuration(50000);
+        mRecorder.setMaxFileSize(5000000);
 
         try {
             mRecorder.prepare();
