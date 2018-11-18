@@ -1,5 +1,6 @@
 package com.teamtwo.inspirationapp;
 
+import android.media.MediaPlayer;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -54,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        playAudio(R.raw.inspirational_background);
     }
 
 
@@ -145,4 +148,14 @@ public class MainActivity extends AppCompatActivity {
             return Integer.MAX_VALUE; //Gl, with that
         }
     }
+
+    public void playAudio(int id){
+        MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), id);
+        if (!mediaPlayer.isPlaying())
+        {
+            mediaPlayer.start();
+            mediaPlayer.setLooping(true);
+        }
+    }
+
 }
