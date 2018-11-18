@@ -1,6 +1,8 @@
 package com.teamtwo.inspirationapp;
 
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.support.v7.app.AppCompatActivity;
 
 import android.support.v4.app.Fragment;
@@ -32,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager mViewPager;
 
     private static List<String> quotesList = new ArrayList<String>();
+    private MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void playAudio(int id){
-        MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), id);
+        mediaPlayer = MediaPlayer.create(getApplicationContext(), id);
 
         if (!mediaPlayer.isPlaying())
         {
