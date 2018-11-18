@@ -39,6 +39,7 @@
         android:layout_marginTop="150dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="100dp"
+        android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -46,7 +47,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/inspirationalText"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:lineSpacingExtra="8sp"
