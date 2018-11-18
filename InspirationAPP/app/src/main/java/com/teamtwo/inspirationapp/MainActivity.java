@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
             String line = reader.readLine();
             while(line != null){
                 line = reader.readLine();
-                quotesList.add(line);
+                if(line!=null && line!="") quotesList.add(line);
             }
         } catch(IOException ioe){
             ioe.printStackTrace();
