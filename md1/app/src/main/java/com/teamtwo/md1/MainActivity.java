@@ -47,6 +47,12 @@ public class MainActivity extends AppCompatActivity {
     CameraFragment cameraFragment;
     AudioFragment audioFragment;
 
+    public void logAnalyticsEvent(String event){
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, event);
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+    }
+
 
     private void setupViewPager(ViewPager viewPager){
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
@@ -68,9 +74,7 @@ public class MainActivity extends AppCompatActivity {
         // Obtain the FirebaseAnalytics instance.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
-        Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "launched application");
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+        logAnalyticsEvent("launched application");
 
         viewPager = (ViewPager) findViewById(R.id.container);
         setupViewPager(viewPager);
@@ -96,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-
+        logAnalyticsEvent("exit application");
         this.traverse(storageDir);
     }
 
@@ -117,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void recordAudio(View view){
+        logAnalyticsEvent("Record Audio");
         audioFragment.toggleRecord();
     }
 
@@ -125,6 +130,8 @@ public class MainActivity extends AppCompatActivity {
      * @param view
      */
     public void catchImage(View view) {
+        logAnalyticsEvent("Catch image");
+
         // Just show information that this is working, nothing more
         Toast.makeText(this, "catch an image", Toast.LENGTH_LONG).show();
 
