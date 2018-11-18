@@ -1,13 +1,10 @@
 package com.teamtwo.md1;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -22,11 +19,8 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class AudioFragment extends Fragment {
     private static final String LOG_TAG = "AudioFragment";
@@ -127,24 +121,6 @@ public class AudioFragment extends Fragment {
         }
     }
 
-//
-//    private void onRecord(boolean start) {
-//        if (start) {
-//            startRecording();
-//        } else {
-//            stopRecording();
-//        }
-//    }
-//
-//    private void onPlay(boolean start) {
-//        //TODO: FIX
-////        if (start) {
-////            startPlaying();
-////        } else {
-////            stopPlaying();
-////        }
-//    }
-
     private void startPlaying(String filePath) {
         mPlayer = new MediaPlayer();
         try {
@@ -152,7 +128,7 @@ public class AudioFragment extends Fragment {
             mPlayer.prepare();
             mPlayer.start();
         } catch (IOException e) {
-            Log.e(LOG_TAG, "prepare() failed");
+            Log.e(LOG_TAG, "startPlaying prepare() failed");
         }
     }
 
@@ -185,9 +161,6 @@ public class AudioFragment extends Fragment {
                 storageDir      /* directory */
         );
 
-        // Save a file: path for use with ACTION_VIEW intents
-//        mCurrentPhotoPath = image.getAbsolutePath();
-
         Log.i(LOG_TAG, "Created file: "+file.getAbsolutePath());
 
         currentAudioFileName = fileName + suffix;
@@ -196,10 +169,6 @@ public class AudioFragment extends Fragment {
     }
 
     private void startRecording() {
-//        String mFileName = getContext().getExternalCacheDir().getAbsolutePath();
-//        mFileName += "/"+getFileName();
-
-
         File audioFile = null;
         try {
             audioFile = createAudioFile();
@@ -208,9 +177,10 @@ public class AudioFragment extends Fragment {
         }
 
         mRecorder = new MediaRecorder();
+//        mRecorder.setCaptureRate(30);
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mRecorder.setOutputFile(audioFile);
+        mRecorder.setOutputFile(audioFile.getAbsolutePath());
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
         mRecorder.setMaxDuration(50000);
@@ -219,7 +189,7 @@ public class AudioFragment extends Fragment {
         try {
             mRecorder.prepare();
         } catch (IOException e) {
-            Log.e(LOG_TAG, "prepare() failed");
+            Log.e(LOG_TAG, "startRecording prepare() failed");
         }
 
         mRecorder.start();

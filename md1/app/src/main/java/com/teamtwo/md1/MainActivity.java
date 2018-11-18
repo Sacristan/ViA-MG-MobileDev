@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Invoke camera, available on device. Intent calls for available camera applications
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        
+
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
 
             // Create image filename
