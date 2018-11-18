@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         this.traverse(storageDir);
     }
 
-    public void traverse (File dir) {
+    public static void traverse (File dir) {
         if (dir.exists()) {
             File[] files = dir.listFiles();
             for (int i = 0; i < files.length; ++i) {

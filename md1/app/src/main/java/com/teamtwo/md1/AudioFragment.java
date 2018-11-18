@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -70,7 +71,6 @@ public class AudioFragment extends Fragment {
 
     private void addNewRecordItem(){
         Button itemButton = new Button(this.getContext());
-//        itemButton.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         itemButton.setText(currentAudioFileName);
 
         itemButton.setOnClickListener(new View.OnClickListener() {
@@ -94,6 +94,14 @@ public class AudioFragment extends Fragment {
         currentRecordAudioNameTextView = view.findViewById(R.id.currentRecordAudioName);
         currentRecordAudioNameTextView.setText("");
         return view;
+    }
+
+    //Cleanup Audio files
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        File storageDir = getContext().getExternalFilesDir("Audio");
+        MainActivity.traverse(storageDir);
     }
 
     @Override
