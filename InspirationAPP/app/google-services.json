@@ -1,0 +1,73 @@
+{
+  "project_info": {
+    "project_number": "812476652244",
+    "firebase_url": "https://affable-ray-222107.firebaseio.com",
+    "project_id": "affable-ray-222107",
+    "storage_bucket": "affable-ray-222107.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:812476652244:android:3d0dff2664f88c22",
+        "android_client_info": {
+          "package_name": "com.teamtwo.inspirationapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "812476652244-njddore5ntd0quimg3k7ub7emled75qt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZxGgn_tIccYIoUze6qrzBZtI-ZsvsH-g"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:812476652244:android:204e0aac7dee6a3d",
+        "android_client_info": {
+          "package_name": "com.teamtwo.md1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "812476652244-njddore5ntd0quimg3k7ub7emled75qt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZxGgn_tIccYIoUze6qrzBZtI-ZsvsH-g"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

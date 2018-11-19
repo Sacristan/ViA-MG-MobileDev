@@ -19,6 +19,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,6 +38,16 @@ public class MainActivity extends AppCompatActivity {
     private static List<String> quotesList = new ArrayList<String>();
     private MediaPlayer mediaPlayer;
 
+    private static FirebaseAnalytics mFirebaseAnalytics;
+
+    private static int currentPageCounter = 0;
+
+    private static void logAnalyticsEvent(String event){
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, event);
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,12 +60,19 @@ public class MainActivity extends AppCompatActivity {
 
         playAudio(R.raw.inspirational_background);
         loadQuotes();
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        logAnalyticsEvent("launch_application");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         quotesList = null;
+        mFirebaseAnalytics = null;
+        currentPageCounter = 0;
+
+        logAnalyticsEvent("exit_application");
     }
 
     @Override
@@ -106,6 +125,9 @@ public class MainActivity extends AppCompatActivity {
             String inspirationalText = quotesList.get(rndInt);
 
             textView.setText(inspirationalText);
+
+            currentPageCounter++;
+            logAnalyticsEvent("look_page_"+currentPageCounter);
 
             return rootView;
         }
