@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MTR2018:MD2</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_git_hub">GitHub</string>
+</resources>
