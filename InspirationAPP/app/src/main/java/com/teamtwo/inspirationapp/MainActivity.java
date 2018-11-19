@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private static FirebaseAnalytics mFirebaseAnalytics;
 
     private static int currentPageCounter = 0;
+    private static int prevPicId = -1;
+    private static int prevQuouteId= -1;
 
     private static void logAnalyticsEvent(String event){
         Bundle bundle = new Bundle();
@@ -111,16 +113,16 @@ public class MainActivity extends AppCompatActivity {
 
             ImageView imageView = (ImageView) rootView.findViewById(R.id.inspirationalBackground);
 
-            Random rand = new Random();
-            int rndInt = rand.nextInt(PICTURE_COUNT) + 1;
-            String imgName = "img_" + rndInt;
+            prevPicId = getRandomId(PICTURE_COUNT+1, prevPicId);
+
+            String imgName = "img_" + prevPicId;
             int id = getResources().getIdentifier(imgName, "drawable", this.getContext().getPackageName());
             imageView.setImageResource(id);
 
             TextView textView = (TextView) rootView.findViewById(R.id.inspirationalText);
-            rndInt = rand.nextInt(quotesList.size());
 
-            String inspirationalText = quotesList.get(rndInt);
+            prevQuouteId = getRandomId(quotesList.size(), prevQuouteId);
+            String inspirationalText = quotesList.get(prevQuouteId);
 
             textView.setText(inspirationalText);
 
@@ -146,6 +148,18 @@ public class MainActivity extends AppCompatActivity {
         public int getCount() {
             return Integer.MAX_VALUE; //Gl, with that
         }
+    }
+
+    private static int getRandomId(int barrierValue, int prevValue){
+        Random rand = new Random();
+
+        int rnd = rand.nextInt(barrierValue);
+
+        while(rnd==prevValue){
+            rnd = rand.nextInt(barrierValue);
+        }
+
+        return rnd;
     }
 
     private void playAudio(int id){
