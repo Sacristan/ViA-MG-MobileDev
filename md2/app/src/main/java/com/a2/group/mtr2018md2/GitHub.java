@@ -1,15 +1,16 @@
 package com.a2.group.mtr2018md2;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
+import android.widget.Button;
+import android.widget.ListView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -28,22 +29,24 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Map;
 
 public class GitHub extends AppCompatActivity {
 
     private static final String TAG = "GitHub API";
 
-    private static final String GITHUB_API_URL = "https://api.github.com/users/tomsons6/repos";
+    private static final String GITHUB_API_URL = "https://api.github.com/users/Sacristan/repos";
     private static final int MAX_LIST_ITEMS = 50;
 
     ProgressDialog pd;
+    ListView repoListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_git_hub);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        repoListView = findViewById(R.id.githubList);
+
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -66,14 +69,31 @@ public class GitHub extends AppCompatActivity {
             {
                 if(i >= MAX_LIST_ITEMS) break;
 
-                JSONObject obj = jsonArray.getJSONObject(i);
-                String item = obj.getString("full_name");
-                Log.i(TAG, "ITEM: "+item);
+                JSONObject item = jsonArray.getJSONObject(i);
+                String itemName = item.getString("full_name");
+                String itemUrl = item.getString("html_url");
+                addNewRecordItem(itemName, itemUrl);
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+
+    private void addNewRecordItem(String name, final String url){
+        Button itemButton = new Button(this);
+        itemButton.setText(name);
+
+        itemButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(browserIntent);
+            }
+        });
+
+        //FIX: https://stackoverflow.com/questions/4576219/logcat-error-addviewview-layoutparams-is-not-supported-in-adapterview-in-a
+        repoListView.addView(itemButton, 0);
     }
 
     protected class JsonTask extends AsyncTask<String, String, String> {
