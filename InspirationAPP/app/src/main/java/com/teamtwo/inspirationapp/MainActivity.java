@@ -27,20 +27,27 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
+    private static final String QUOTE_CACHE_FILENAME = "qoutes.cache";
 
-    private static final String QUOTES_JSON_DATA_URI = "https://gist.githubusercontent.com/Sacristan/3cdc5db13184df250349467e7a568e28/raw/88a562349b70124cb35e14775350ecc80781b155/inspirational_quotes.json";
+    private static final String QUOTES_JSON_DATA_URI = "https://gist.githubusercontent.com/Sacristan/3cdc5db13184df250349467e7a568e28/raw/inspirational_quotes.json";
     private static final int PICTURE_COUNT = 24;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
@@ -190,19 +197,102 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     private void fetchQuoutes(){
         new JsonTask().execute(QUOTES_JSON_DATA_URI);
     }
 
     private void parseQuotesJSON(String rawJSON){
+        final String ParseQuotesTag = "ParseQuotesJSON";
+
+        JSONObject jObject = null;
+        JSONObject jCacheObject = loadJSONFromCache();
+
+        boolean emptyData = rawJSON == "";
+
         try {
-            JSONObject jObject = new JSONObject(rawJSON);
-            int version = jObject.getInt("version");
-            JSONArray jArray = jObject.getJSONArray("quotes");
-            populateQuoutes(jArray);
+
+            if(emptyData) {
+                Log.i(ParseQuotesTag, "Received empty JSON data - trying to load from cache...");
+                jObject = jCacheObject;
+            }
+            else{
+                jObject = new JSONObject(rawJSON);
+                int version = jObject.getInt("version");
+
+                if (jCacheObject != null) {
+                    int cacheVersion = jCacheObject.getInt("version");
+
+                    if (version == cacheVersion) {
+                        Log.i(ParseQuotesTag, "EXT and CACHE JSON versions the same. Nothing to do here!");
+                    }
+                    else{
+                        Log.i(ParseQuotesTag, "EXT and CACHE JSON versions differ. Creating cache file...");
+                        createCacheFile(rawJSON);
+                    }
+                }
+                else{
+                    Log.i(ParseQuotesTag, "No cache JSON present - creating one...");
+                    createCacheFile(rawJSON);
+                }
+            }
+
+            if(jObject!=null) {
+                JSONArray jArray = jObject.getJSONArray("quotes");
+                populateQuoutes(jArray);
+            }
 
         } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private JSONObject loadJSONFromCache(){
+        File directory = getApplicationContext().getFilesDir();
+        File file = new File(directory, QUOTE_CACHE_FILENAME);
+
+        if(!file.exists()) return null;
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String line;
+
+            line =  br.lines().collect(Collectors.joining());
+            Log.i(TAG, "READ CACHE JSON: "+line);
+
+            br.close();
+            try {
+                JSONObject jObject = new JSONObject(line);
+                return jObject;
+            }
+
+            catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+
+        }
+        return null;
+    }
+
+    private void createCacheFile(String data){
+        try {
+
+//            File file = File.createTempFile(QUOTE_CACHE_FILENAME, null, getApplicationContext().getFilesDir());
+            File file = new File(getApplicationContext().getFilesDir(), QUOTE_CACHE_FILENAME);
+
+            FileOutputStream fOut = new FileOutputStream(file);
+            OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
+            myOutWriter.append(data);
+
+            myOutWriter.close();
+
+            fOut.flush();
+            fOut.close();
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -213,7 +303,7 @@ public class MainActivity extends AppCompatActivity {
                 String qoute = jArray.getString(i);
                 quotesList.add(qoute);
             } catch (JSONException e) {
-                // Oops
+                e.printStackTrace();
             }
         }
     }
