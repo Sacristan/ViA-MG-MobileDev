@@ -38,6 +38,8 @@ import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
+
     private static final String QUOTES_JSON_DATA_URI = "https://gist.githubusercontent.com/Sacristan/3cdc5db13184df250349467e7a568e28/raw/88a562349b70124cb35e14775350ecc80781b155/inspirational_quotes.json";
     private static final int PICTURE_COUNT = 24;
     private SectionsPagerAdapter mSectionsPagerAdapter;
@@ -58,6 +60,13 @@ public class MainActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, event);
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+    }
+
+    private void startInspirationalExperience(){
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
     }
 
     @Override
@@ -120,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
 
             ImageView imageView = (ImageView) rootView.findViewById(R.id.inspirationalBackground);
 
-            prevPicId = getRandomId(PICTURE_COUNT+1, prevPicId);
+            prevPicId = getRandomId(PICTURE_COUNT, prevPicId) + 1;
 
             String imgName = "img_" + prevPicId;
             int id = getResources().getIdentifier(imgName, "drawable", this.getContext().getPackageName());
@@ -132,6 +141,8 @@ public class MainActivity extends AppCompatActivity {
             String inspirationalText = quotesList.get(prevQuouteId);
 
             textView.setText(inspirationalText);
+
+            Log.i(TAG, "GENERATED IMGID: " + prevPicId+ " QUOUTEID: "+ prevQuouteId);
 
             currentPageCounter++;
             logAnalyticsEvent("look_page_"+currentPageCounter);
@@ -272,10 +283,7 @@ public class MainActivity extends AppCompatActivity {
                 pd.dismiss();
             }
 
-            mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
-            mViewPager = (ViewPager) findViewById(R.id.container);
-            mViewPager.setAdapter(mSectionsPagerAdapter);
+            startInspirationalExperience();
 
         }
     }
