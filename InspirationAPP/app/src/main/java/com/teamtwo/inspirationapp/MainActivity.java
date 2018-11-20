@@ -1,6 +1,8 @@
 package com.teamtwo.inspirationapp;
 
+import android.app.ProgressDialog;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 
 import android.support.v4.app.Fragment;
@@ -8,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,16 +22,23 @@ import android.widget.TextView;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
-
+    private static final String QUOTES_JSON_DATA_URI = "https://gist.githubusercontent.com/Sacristan/3cdc5db13184df250349467e7a568e28/raw/88a562349b70124cb35e14775350ecc80781b155/inspirational_quotes.json";
     private static final int PICTURE_COUNT = 24;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
@@ -38,9 +48,11 @@ public class MainActivity extends AppCompatActivity {
 
     private static FirebaseAnalytics mFirebaseAnalytics;
 
+    ProgressDialog pd = null;
+
     private static int currentPageCounter = 0;
     private static int prevPicId = -1;
-    private static int prevQuouteId= -1;
+    private static int prevQuouteId = -1;
 
     private static void logAnalyticsEvent(String event){
         Bundle bundle = new Bundle();
@@ -53,13 +65,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
         playAudio(R.raw.inspirational_background);
-        loadQuotes();
+        fetchQuoutes();
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         logAnalyticsEvent("launch_application");
@@ -173,19 +180,103 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void loadQuotes(){
-        BufferedReader reader;
+    private void fetchQuoutes(){
+        new JsonTask().execute(QUOTES_JSON_DATA_URI);
+    }
 
-        try{
-            final InputStream file = getResources().openRawResource(R.raw.inspirational_quotes);
-            reader = new BufferedReader(new InputStreamReader(file));
-            String line = reader.readLine();
-            while(line != null){
-                line = reader.readLine();
-                if(line!=null && line!="") quotesList.add(line);
+    private void parseQuotesJSON(String rawJSON){
+        try {
+            JSONObject jObject = new JSONObject(rawJSON);
+            int version = jObject.getInt("version");
+            JSONArray jArray = jObject.getJSONArray("quotes");
+            populateQuoutes(jArray);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void populateQuoutes(JSONArray jArray){
+        for (int i=0; i < jArray.length(); i++){
+            try {
+                String qoute = jArray.getString(i);
+                quotesList.add(qoute);
+            } catch (JSONException e) {
+                // Oops
             }
-        } catch(IOException ioe){
-            ioe.printStackTrace();
+        }
+    }
+
+    protected class JsonTask extends AsyncTask<String, String, String> {
+
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            pd = new ProgressDialog(MainActivity.this);
+            pd.setMessage("Please wait...");
+            pd.setCancelable(false);
+            pd.show();
+        }
+
+        protected String doInBackground(String... params) {
+            HttpURLConnection connection = null;
+            BufferedReader reader = null;
+
+            try {
+                URL url = new URL(params[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+
+                InputStream stream = connection.getInputStream();
+
+                reader = new BufferedReader(new InputStreamReader(stream));
+
+                StringBuffer buffer = new StringBuffer();
+                String line = "";
+
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line+"\n");
+                    Log.d("Response: ", "> " + line);
+
+                }
+
+                return buffer.toString();
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+                try {
+                    if (reader != null) {
+                        reader.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+            parseQuotesJSON(result);
+
+            if (pd.isShowing()){
+                pd.dismiss();
+            }
+
+            mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
+            mViewPager = (ViewPager) findViewById(R.id.container);
+            mViewPager.setAdapter(mSectionsPagerAdapter);
+
         }
     }
 
