@@ -8,8 +8,17 @@
     tools:context=".GitHub"
     tools:showIn="@layout/activity_git_hub">
 
-    <ListView
-        android:id="@+id/githubList"
-        android:layout_width="300dp"
-        android:layout_height="400dp"></ListView>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        </LinearLayout>
+    </ScrollView>
+
 </android.support.constraint.ConstraintLayout>

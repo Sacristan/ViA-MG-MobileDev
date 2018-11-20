@@ -46,13 +46,14 @@ public class GitHub extends AppCompatActivity {
     private static final int MAX_LIST_ITEMS = 50;
 
     ProgressDialog pd;
-    ListView repoListView;
+    LinearLayout repoListView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_git_hub);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        repoListView = findViewById(R.id.githubList);
+        repoListView = findViewById(R.id.linearLayout);
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -99,9 +100,9 @@ public class GitHub extends AppCompatActivity {
         });
 
         //FIX: https://stackoverflow.com/questions/4576219/logcat-error-addviewview-layoutparams-is-not-supported-in-adapterview-in-a
-        //repoListView.addView(itemButton, 0);
-        LinearLayout layout = new LinearLayout(this);
-        layout.addView(itemButton,new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT,0));
+        repoListView.addView(itemButton, 0);
+//        LinearLayout layout = new LinearLayout(this);
+//        layout.addView(itemButton,new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT,0));
     }
 
     protected class JsonTask extends AsyncTask<String, String, String> {
